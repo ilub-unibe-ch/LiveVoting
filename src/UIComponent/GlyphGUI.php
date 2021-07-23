@@ -1,16 +1,12 @@
 <?php
 
-namespace srag\CustomInputGUIs\LiveVoting\GlyphGUI;
+namespace LiveVoting\UIComponent;
 
 use ilGlyphGUI;
 use srag\DIC\LiveVoting\DICTrait;
 
 /**
  * Class GlyphGUI
- *
- * @package srag\CustomInputGUIs\LiveVoting\GlyphGUI
- *
- * @deprecated
  */
 class GlyphGUI extends ilGlyphGUI
 {
@@ -26,8 +22,6 @@ class GlyphGUI extends ilGlyphGUI
      * @param string $a_text  text representation
      *
      * @return string html
-     *
-     * @deprecated
      */
     static function get(/*string*/ $a_glyph, /*string*/ $a_text = "") : string
     {
@@ -46,8 +40,6 @@ class GlyphGUI extends ilGlyphGUI
      * @param $a_glyph
      *
      * @return string
-     *
-     * @deprecated
      */
     static function gets(string $a_glyph) : string
     {
