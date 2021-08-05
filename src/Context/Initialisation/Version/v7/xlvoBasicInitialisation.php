@@ -810,7 +810,10 @@ class xlvoBasicInitialisation
 
         $DIC['resource_storage'] = static function (Container $c) : \ILIAS\ResourceStorage\Services {
             return new \ILIAS\ResourceStorage\Services(
-                new FileSystemStorageHandler($c['filesystem.storage'], Location::STORAGE),
+                new \ILIAS\ResourceStorage\StorageHandler\StorageHandlerFactory([
+                    new \ILIAS\ResourceStorage\StorageHandler\FileSystemBased\MaxNestingFileSystemStorageHandler($c['filesystem.storage'], Location::STORAGE),
+                    new \ILIAS\ResourceStorage\StorageHandler\FileSystemBased\FileSystemStorageHandler($c['filesystem.storage'], Location::STORAGE)
+                ]),
                 new RevisionARRepository(),
                 new ResourceARRepository(),
                 new InformationARRepository(),
