@@ -76,18 +76,20 @@ class xlvoSingleVoteSubFormGUI extends xlvoSubFormGUI
                 break;
             case self::F_OPTIONS:
                 $position = 0;
-                foreach ($value as $item) {
-                    /**
-                     * @var xlvoOption $xlvoOption
-                     */
-                    $xlvoOption = xlvoOption::findOrGetInstance($item[self::F_ID]);
-                    $xlvoOption->setText($item[self::F_TEXT]);
-                    $xlvoOption->setPosition($position);
-                    $xlvoOption->setStatus(xlvoOption::STAT_ACTIVE);
-                    $xlvoOption->setVotingId($this->getXlvoVoting()->getId());
-                    $xlvoOption->setType($this->getXlvoVoting()->getVotingType());
-                    $this->options[] = $xlvoOption;
-                    $position++;
+                if (isset($value)) {
+                    foreach ($value as $item) {
+                        /**
+                         * @var xlvoOption $xlvoOption
+                         */
+                        $xlvoOption = xlvoOption::findOrGetInstance($item[self::F_ID]);
+                        $xlvoOption->setText($item[self::F_TEXT]);
+                        $xlvoOption->setPosition($position);
+                        $xlvoOption->setStatus(xlvoOption::STAT_ACTIVE);
+                        $xlvoOption->setVotingId($this->getXlvoVoting()->getId());
+                        $xlvoOption->setType($this->getXlvoVoting()->getVotingType());
+                        $this->options[] = $xlvoOption;
+                        $position++;
+                    }
                 }
                 break;
             case self::F_COLORS:
