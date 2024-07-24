@@ -251,10 +251,9 @@ class xlvoVotingGUI
             $xlvoVotingFormGUI = xlvoVotingFormGUI::get($this, $xlvoVoting);
             $xlvoVotingFormGUI->setValuesByPost();
             if ($xlvoVotingFormGUI->saveObject()) {
-                self::dic()->ui()->mainTemplate()->setOnScreenMessage('success', self::plugin()->translate("msg_success_voting_created"));
-
+                $_SESSION['onscreen_message'] = array('type' => 'success', 'msg' => self::plugin()->translate("msg_success_voting_created"));
             }
-            self::dic()->ui()->mainTemplate()->setContent($xlvoVotingFormGUI->getHTML());
+            self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
         }
     }
 
