@@ -144,8 +144,8 @@ class xlvoBasicInitialisation
         $this->initLocale();
         $this->buildHTTPPath();
         $this->initCore();
-        $this->initUser();
         $this->initLanguage();
+        $this->initUser();
         $this->initTree();
         $this->initComponentService($GLOBALS["DIC"]);
         $this->initControllFlow();
