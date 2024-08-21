@@ -67,7 +67,7 @@ class xlvoSingleVoteGUI extends xlvoQuestionTypesGUI
     public function handleButtonCall($button_id, $data)
     {
         $states = $this->getButtonsStates();
-        $this->saveButtonState($button_id, !$states[$button_id]);
+        $this->saveButtonState($button_id, !(array_key_exists($button_id, $states) && $states[$button_id]));
     }
 
 
