@@ -199,7 +199,7 @@ class xlvoBasicInitialisation
         $this->makeGlobal('styleDefinition', $styleDefinition);
 
         $ilias = new xlvoILIAS();
-        $this->makeGlobal("ilias", $ilias);
+        $this->makeGlobal("ilias", null);
 
         $tpl = new ilGlobalTemplate("tpl.main.html", true, true,
             'Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting', "DEFAULT", true);
