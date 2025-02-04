@@ -26,6 +26,7 @@ class xlvoResultsGUI extends xlvoGUI
     const CMD_SHOW_HISTORY = "showHistory";
     const CMD_RESET_FILTER = 'resetFilter';
     const CMD_CONFIRM_NEW_ROUND = 'confirmNewRound';
+    public const ROUND_ID = 'round_id';
     /**
      * @var xlvoRound
      */
@@ -38,7 +39,7 @@ class xlvoResultsGUI extends xlvoGUI
      * @var xlvoVotingConfig
      */
     private $config;
-
+    private \ILIAS\HTTP\Services $http;
 
     /**
      * xlvoResultsGUI constructor.
@@ -47,9 +48,11 @@ class xlvoResultsGUI extends xlvoGUI
      */
     public function __construct($obj_id)
     {
+        global $DIC;
         parent::__construct();
         $this->obj_id = $obj_id;
         $this->config = xlvoVotingConfig::find($obj_id);
+        $this->http = $DIC->http();
         $this->buildRound();
     }
 
@@ -86,22 +89,15 @@ class xlvoResultsGUI extends xlvoGUI
         $this->buildFilters($table);
         $table->initFilter();
         $table->buildData($this->obj_id, $this->round->getId());
-        if (isset($_SESSION['onscreen_message'])) {
-            $message = $_SESSION['onscreen_message'];
-            self::dic()->ui()->mainTemplate()->setOnScreenMessage($message['type'], $message['msg']);
-            unset($_SESSION['onscreen_message']); // Limpiar el mensaje después de mostrarlo
-        }
         self::dic()->ui()->mainTemplate()->setContent($table->getHTML());
     }
 
-
-    /**
-     *
-     */
-    private function buildRound()
+    private function buildRound(): void
     {
-        if ($_GET['round_id']) {
-            $this->round = xlvoRound::find($_GET['round_id']);
+        $round_id = $this->http->request()->getQueryParams()[self::ROUND_ID] ?? null;
+
+        if ($round_id != null) {
+            $this->round = xlvoRound::find($round_id);
         } else {
             $this->round = xlvoRound::getLatestRound($this->obj_id);
         }
@@ -137,13 +133,10 @@ class xlvoResultsGUI extends xlvoGUI
     }
 
 
-    /**
-     *
-     */
-    private function changeRound()
+    private function changeRound(): void
     {
-        $round = $_POST['round_id'];
-        self::dic()->ctrl()->setParameter($this, 'round_id', $round);
+        $round = $this->http->request()->getParsedBody()[self::ROUND_ID] ?? null;
+        self::dic()->ctrl()->setParameter($this, self::ROUND_ID, $round);
         self::dic()->ctrl()->redirect($this, self::CMD_SHOW);
     }
 
@@ -158,8 +151,8 @@ class xlvoResultsGUI extends xlvoGUI
         $newRound->setRoundNumber($lastRound->getRoundNumber() + 1);
         $newRound->setObjId($this->obj_id);
         $newRound->store();
-        self::dic()->ctrl()->setParameter($this, 'round_id', xlvoRound::getLatestRound($this->obj_id)->getId());
-        $_SESSION['onscreen_message'] = array('type' => 'success', 'msg' => self::plugin()->translate("common_new_round_created"));
+        self::dic()->ctrl()->setParameter($this, self::ROUND_ID, xlvoRound::getLatestRound($this->obj_id)->getId());
+        self::dic()->ui()->mainTemplate()->setOnScreenMessage('success', self::plugin()->translate("common_new_round_created"), true);
         self::dic()->ctrl()->redirect($this, self::CMD_SHOW);
     }
 
@@ -327,7 +320,7 @@ class xlvoResultsGUI extends xlvoGUI
 
         self::dic()->toolbar()->addSeparator();
 
-        $table_selection = new ilSelectInputGUI('', 'round_id');
+        $table_selection = new ilSelectInputGUI('', self::ROUND_ID);
         $options = $this->getRounds();
         $table_selection->setOptions($options);
         $table_selection->setValue($this->round->getId());
