@@ -19,6 +19,7 @@ declare(strict_types=1);
  *
  */
 
+use LiveVoting\platform\ilias\LiveVotingContext;
 use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\LiveVotingJs;
@@ -111,12 +112,19 @@ class LiveVotingPlayerGUI
      * @throws ilSystemStyleException
      * @throws LiveVotingException
      * @throws ilCtrlException|ilException
+     * @throws Exception
      */
     protected function startVoterPlayer(): void
     {
         global $DIC;
 
         $player = $this->live_voting->getPlayer();
+
+        if ($this->live_voting->isAnonymous() && LiveVotingParticipant::getInstance()->getIdentifier() == ANONYMOUS_USER_ID) {
+            LiveVotingContext::setContext(1);
+
+            LiveVotingParticipant::getInstance()->setIdentifier(session_id())->setType(2);
+        }
 
         if ($this->live_voting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
             if ($this->live_voting->isNicknames() && LiveVotingParticipant::getInstance()->getNickname($player->getId()) == "") {
@@ -176,7 +184,7 @@ class LiveVotingPlayerGUI
 
         LiveVotingJs::getInstance()->initMathJax();
 
-        $t = array('player_seconds');
+        $t = array('player_seconds', 'new_voting', 'new_voting_message', 'seconds_left', 'qtype_1_unvote', 'qtype_1_vote');
 
         $delay = LiveVotingConfig::get('request_frequency');
         if (is_numeric($delay)) {
@@ -273,6 +281,8 @@ class LiveVotingPlayerGUI
                         $this->getVotingTemplate()->parseCurrentBlock();
                     }
                     $this->getVotingTemplate()->setVariable('QUESTION', $xlvoQuestionTypesGUI->getMobileHTML());
+                    $this->getVotingTemplate()->setVariable('QTYPE', $this->getLiveVoting()->getPlayer()->getActiveVotingObject()->getQuestionTypeLabel());
+                    $this->getVotingTemplate()->setVariable('QTYPE_DISPLAY', 'display');
                     break;
                 case LiveVotingPlayer::STAT_START_VOTING:
                     $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_start'));
