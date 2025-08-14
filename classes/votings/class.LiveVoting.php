@@ -109,21 +109,14 @@ class LiveVoting
      */
     public function getShortLink(int $ref_id): string
     {
-        switch ($this->isAnonymous()) {
-            case true:
-                $shortLinkEnabled = boolval(LiveVotingConfig::get("allow_shortlink"));
+        $shortLinkEnabled = boolval(LiveVotingConfig::get("allow_shortlink"));
 
-                if ($shortLinkEnabled) {
-                    $url = LiveVotingConfig::get("allow_shortlink_link");
-                    $url = rtrim($url, "/") . "/" . $this->pin;
-                } else {
-                    $url = ILIAS_HTTP_PATH . '/' . ilLiveVotingPlugin::getInstance()->getDirectory() . '/pin.php?xlvo_pin=' . $this->getPin();
-                }
-
-                break;
-            default:
-                $url = ILIAS_HTTP_PATH . "/" . "goto.php?target=xlvo_1_pin_" . $this->getPin();
-                break;
+        if ($shortLinkEnabled) {
+            $url = LiveVotingConfig::get("allow_shortlink_link");
+            $url = rtrim($url, "/") . "/" . $this->pin;
+        } else {
+            $url = ILIAS_HTTP_PATH . '/' . ilLiveVotingPlugin::getInstance()->getDirectory(
+                ) . '/pin.php?xlvo_pin=' . $this->getPin();
         }
 
         return $url;
