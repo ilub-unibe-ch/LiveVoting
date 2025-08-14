@@ -46,5 +46,12 @@ switch ($context) {
 LiveVotingConfig::load();
 
 global $DIC;
+
 $DIC->ctrl()->setTargetScript(LiveVotingConfig::getFullApiURL());
-$DIC->ctrl()->callBaseClass();
+try {
+    $DIC->ctrl()->callBaseClass();
+}
+catch (Exception $e) {
+    $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
+
+}
