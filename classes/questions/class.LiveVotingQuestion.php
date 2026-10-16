@@ -515,7 +515,9 @@ abstract class LiveVotingQuestion
         // deliver.php URLs are built from the current script, which is the plugin's ilias.php here
         $root = strstr(ILIAS_HTTP_PATH, '/Customizing', true);
         $question = preg_replace(
-            '#src="[^"]*?/deliver\.php/#',
+            //Fix image URLs in manually adjusted LiveVoting questions
+            //'#src="[^"]*?/deliver\.php/#',
+            '#src="(?!data:)[^"]*?/deliver\.php/#i',
             'src="' . rtrim($root !== false ? $root : ILIAS_HTTP_PATH, '/') . '/deliver.php/',
             $question
         );
